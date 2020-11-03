@@ -29,33 +29,31 @@ void string_intern_realloc() {
     internsList.interns = realloc(internsList.interns, internsList.capacity * sizeof(String));
 }
 
-String string_intern_new(String string, int count) {
+String string_intern_new(String string, unsigned long count) {
     if (internsList.size == internsList.capacity)
         string_intern_realloc();
 
     // Copy till the end of the string if count is greater than string lenght
-    unsigned int len = (strlen(string) < count) ? strlen(string) : count;
-    char* intern = malloc(len + 1);
-    strcpy(intern, string);
-    intern[len] = '\0';
+    char* intern = malloc(count + 1);
+    strncpy(intern, string, count);
+    intern[count] = '\0';
 
     internsList.interns[internsList.size++] = intern;
     return intern;
 }
 
 
-String string_intern_n(String string, int count) {
+String string_intern_n(String string, unsigned long count) {
     if (internsList.size == internsList.capacity)
         string_intern_realloc();
-    size_t length = (strlen(string) < count) ? strlen(string) : count;
     for (int i = 0; i < internsList.size; i++) {
         String intern = internsList.interns[i];
-        if (strlen(intern) == length && strncmp(intern, string, length) == 0)
+        if (strlen(intern) == count && strncmp(intern, string, count) == 0)
             return intern;
     }
     return string_intern_new(string, count);
 }
 
 String string_intern(String string) {
-    return string_intern_n(string, -1);
+    return string_intern_n(string, strlen(string));
 }

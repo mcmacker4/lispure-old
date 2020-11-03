@@ -15,7 +15,7 @@ void string_intern_cleanup();
  *
  * @return A string pointer.
  */
-String string_intern_n(String string, int count);
+String string_intern_n(String string, unsigned long count);
 String string_intern(String string);
 
 #endif //CLOJURE_NATIVE_STRING_H
