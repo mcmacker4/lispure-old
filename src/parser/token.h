@@ -10,7 +10,6 @@ typedef enum TokenType {
     LBRACK, RBRACK,
     LCURL, RCURL,
     HASH,
-    NIL,
     SYMBOL,
     KEYWORD, // Starts with :
     INTEGER,
@@ -44,7 +43,6 @@ TOKEN_GENERATOR_H(rbrack, RBRACK)
 TOKEN_GENERATOR_H(lcurl, LCURL)
 TOKEN_GENERATOR_H(rcurl, RCURL)
 TOKEN_GENERATOR_H(hash, HASH)
-TOKEN_GENERATOR_H(nil, NIL)
 
 TOKEN_GENERATOR_DATA_H(symbol, SYMBOL, String)
 TOKEN_GENERATOR_DATA_H(keyword, KEYWORD, String)

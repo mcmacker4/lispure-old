@@ -11,15 +11,25 @@ void tokenizer_skipspaces(Tokenizer* tokenizer) {
     }
 }
 
-void tokenizer_readsymbol(Tokenizer* tokenizer) {
+static inline int is_symbol_head(char c) {
+    return isalpha(c) || c == '*' || c == '+' || c == '!' ||
+                         c == '-' || c == '_' || c == '?' ||
+                         c == '>' || c == '<' || c == '=' ||
+                         c == '$';
+}
 
+static inline int is_symbol_rest(char c) {
+    return is_symbol_head(c) || isdigit(c) || c == '.' || c == '#';
+}
+
+void tokenizer_readsymbol(Tokenizer* tokenizer) {
     unsigned long start = tokenizer->source->position;
     unsigned int line = tokenizer->source->line;
     unsigned int column = tokenizer->source->column;
     String path = tokenizer->source->path;
 
     while (source_remaining(tokenizer->source) &&
-            isalnum(source_peek(tokenizer->source)))
+            is_symbol_rest(source_peek(tokenizer->source)))
         source_consume(tokenizer->source);
 
     unsigned long length = tokenizer->source->position - start;
@@ -29,7 +39,6 @@ void tokenizer_readsymbol(Tokenizer* tokenizer) {
 }
 
 void tokenizer_readkeyword(Tokenizer* tokenizer) {
-
     unsigned long start = tokenizer->source->position;
     unsigned int line = tokenizer->source->line;
     unsigned int column = tokenizer->source->column;
@@ -48,7 +57,6 @@ void tokenizer_readkeyword(Tokenizer* tokenizer) {
 }
 
 void tokenizer_readinteger(Tokenizer* tokenizer) {
-
     unsigned int line = tokenizer->source->line;
     unsigned int column = tokenizer->source->column;
     String path = tokenizer->source->path;
@@ -60,7 +68,42 @@ void tokenizer_readinteger(Tokenizer* tokenizer) {
     }
 
     tokenlist_append(tokenizer->list, token_integer(value, line, column, path));
+}
 
+void tokenizer_readstring(Tokenizer* tokenizer) {
+    unsigned int line = tokenizer->source->line;
+    unsigned int column = tokenizer->source->column;
+    String path = tokenizer->source->path;
+
+    source_consume(tokenizer->source);
+
+    unsigned int strlen = 0;
+    unsigned int strcap = 512;
+    char* str = malloc(strcap);
+
+    while (source_remaining(tokenizer->source) &&
+            source_peek(tokenizer->source) != '"') {
+        if (strlen == strcap - 1) {
+            strcap = strcap * 3 / 2;
+            str = realloc(str, strcap);
+        }
+        str[strlen++] = source_consume(tokenizer->source);
+    }
+
+    str = realloc(str, strlen + 1);
+    str[strlen] = 0;
+
+    if (source_peek(tokenizer->source) != '"') {
+        fprintf(stderr, "Invalid token at %s:%d:%d", path, line, column);
+        exit(-1);
+    }
+
+    str = realloc(str, strlen + 1);
+    str[strlen] = 0;
+
+    source_consume(tokenizer->source);
+
+    tokenlist_append(tokenizer->list, token_string(str, line, column, path));
 }
 
 void tokenizer_next(Tokenizer* tokenizer) {
@@ -71,7 +114,7 @@ void tokenizer_next(Tokenizer* tokenizer) {
     unsigned int column = tokenizer->source->column;
     String path = tokenizer->source->path;
 
-    if (isalpha(c)) {
+    if (is_symbol_head(c)) {
         tokenizer_readsymbol(tokenizer);
     } else if (isdigit(c)) {
         tokenizer_readinteger(tokenizer);
@@ -80,13 +123,27 @@ void tokenizer_next(Tokenizer* tokenizer) {
     } else if (c == '(') {
         source_consume(tokenizer->source);
         tokenlist_append(tokenizer->list, token_lparen(line, column, path));
+    } else if (c == '"') {
+        tokenizer_readstring(tokenizer);
     } else if (c == ')') {
         source_consume(tokenizer->source);
         tokenlist_append(tokenizer->list, token_rparen(line, column, path));
+    } else if (c == '[') {
+        source_consume(tokenizer->source);
+        tokenlist_append(tokenizer->list, token_lbrack(line, column, path));
+    } else if (c == ']') {
+        source_consume(tokenizer->source);
+        tokenlist_append(tokenizer->list, token_rbrack(line, column, path));
+    } else if (c == '{') {
+        source_consume(tokenizer->source);
+        tokenlist_append(tokenizer->list, token_lcurl(line, column, path));
+    } else if (c == '}') {
+        source_consume(tokenizer->source);
+        tokenlist_append(tokenizer->list, token_rcurl(line, column, path));
     } else {
         // TODO Print Error with source.
         SourceCode* source = tokenizer->source;
-        fprintf(stderr, "Invalid token at %d:%d\n", source->line, source->column);
+        fprintf(stderr, "Invalid token at %s:%d:%d\n", source->path, source->line, source->column);
         exit(-1);
     }
 

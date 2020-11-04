@@ -31,8 +31,6 @@ const char* read_file(const char* path) {
     long size = ftell(file);
     rewind(file);
 
-    printf("File size: %ld\n", size);
-
     char* text = malloc(size + 1);
     fread(text, 1, size, file);
     fclose(file);

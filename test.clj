@@ -1,6 +1,3 @@
-hello world
-:world
+(println "Hello World!" (+ 1 5))
 
-world
-
-123
+(defun [x y] (+ x y))
