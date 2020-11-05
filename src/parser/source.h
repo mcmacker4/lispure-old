@@ -1,12 +1,12 @@
 #ifndef LISPURE_SOURCE_H
 #define LISPURE_SOURCE_H
 
-#include "../util/string.h"
+#include "../util/string_intern.h"
 
 typedef struct SourceCode {
 
     const char* text;
-    String path;
+    StringIntern path;
 
     unsigned long position;
     unsigned long length;

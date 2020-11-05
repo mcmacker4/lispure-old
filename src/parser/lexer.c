@@ -26,14 +26,14 @@ void tokenizer_readsymbol(Tokenizer* tokenizer) {
     unsigned long start = tokenizer->source->position;
     unsigned int line = tokenizer->source->line;
     unsigned int column = tokenizer->source->column;
-    String path = tokenizer->source->path;
+    StringIntern path = tokenizer->source->path;
 
     while (source_remaining(tokenizer->source) &&
             is_symbol_rest(source_peek(tokenizer->source)))
         source_consume(tokenizer->source);
 
     unsigned long length = tokenizer->source->position - start;
-    String str = string_intern_n(tokenizer->source->text + start, length);
+    StringIntern str = string_intern_n(tokenizer->source->text + start, length);
 
     tokenlist_append(tokenizer->list, token_symbol(str, line, column, path));
 }
@@ -42,7 +42,7 @@ void tokenizer_readkeyword(Tokenizer* tokenizer) {
     unsigned long start = tokenizer->source->position;
     unsigned int line = tokenizer->source->line;
     unsigned int column = tokenizer->source->column;
-    String path = tokenizer->source->path;
+    StringIntern path = tokenizer->source->path;
 
     source_consume(tokenizer->source); // Consume colon character.
 
@@ -51,7 +51,7 @@ void tokenizer_readkeyword(Tokenizer* tokenizer) {
         source_consume(tokenizer->source);
 
     unsigned long length = tokenizer->source->position - start;
-    String str = string_intern_n(tokenizer->source->text + start, length);
+    StringIntern str = string_intern_n(tokenizer->source->text + start, length);
 
     tokenlist_append(tokenizer->list, token_keyword(str, line, column, path));
 }
@@ -59,7 +59,7 @@ void tokenizer_readkeyword(Tokenizer* tokenizer) {
 void tokenizer_readinteger(Tokenizer* tokenizer) {
     unsigned int line = tokenizer->source->line;
     unsigned int column = tokenizer->source->column;
-    String path = tokenizer->source->path;
+    StringIntern path = tokenizer->source->path;
 
     long value = 0;
     while (isdigit(source_peek(tokenizer->source))) {
@@ -73,7 +73,7 @@ void tokenizer_readinteger(Tokenizer* tokenizer) {
 void tokenizer_readstring(Tokenizer* tokenizer) {
     unsigned int line = tokenizer->source->line;
     unsigned int column = tokenizer->source->column;
-    String path = tokenizer->source->path;
+    StringIntern path = tokenizer->source->path;
 
     source_consume(tokenizer->source);
 
@@ -112,7 +112,7 @@ void tokenizer_next(Tokenizer* tokenizer) {
 
     unsigned int line = tokenizer->source->line;
     unsigned int column = tokenizer->source->column;
-    String path = tokenizer->source->path;
+    StringIntern path = tokenizer->source->path;
 
     if (is_symbol_head(c)) {
         tokenizer_readsymbol(tokenizer);
@@ -157,7 +157,7 @@ void tokenizer_tokenize(Tokenizer* tokenizer) {
     }
 }
 
-TokenList tokenize_file(String path) {
+TokenList tokenize_file(StringIntern path) {
     TokenList list = tokenlist_new();
     SourceCode source = source_from_file(path);
 

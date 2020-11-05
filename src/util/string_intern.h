@@ -1,7 +1,7 @@
-#ifndef CLOJURE_NATIVE_STRING_H
-#define CLOJURE_NATIVE_STRING_H
+#ifndef CLOJURE_NATIVE_STRING_INTERN_H
+#define CLOJURE_NATIVE_STRING_INTERN_H
 
-typedef const char* String;
+typedef const char* StringIntern;
 
 void string_intern_init();
 void string_intern_cleanup();
@@ -15,7 +15,7 @@ void string_intern_cleanup();
  *
  * @return A string pointer.
  */
-String string_intern_n(String string, unsigned long count);
-String string_intern(String string);
+StringIntern string_intern_n(StringIntern string, unsigned long count);
+StringIntern string_intern(StringIntern string);
 
-#endif //CLOJURE_NATIVE_STRING_H
+#endif //CLOJURE_NATIVE_STRING_INTERN_H

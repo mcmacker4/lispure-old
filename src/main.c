@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "util/string.h"
+#include "util/string_intern.h"
 #include "parser/lexer.h"
 
 
@@ -19,7 +19,7 @@ int main(int argc, const char** argv) {
 
     string_intern_init();
 
-    String path = string_intern(argv[1]);
+    StringIntern path = string_intern(argv[1]);
 
     TokenList list = tokenize_file(path);
     for (int i = 0; i < list.size; i++) {

@@ -2,7 +2,7 @@
 
 
 #define TOKEN_GENERATOR_C(fname, ttype)                                     \
-Token token_##fname(unsigned int line, unsigned int column, String path) {  \
+Token token_##fname(unsigned int line, unsigned int column, StringIntern path) {  \
     Token token;                                                            \
     token.type = ttype;                                                     \
     token.string = NULL;                                                    \
@@ -13,7 +13,7 @@ Token token_##fname(unsigned int line, unsigned int column, String path) {  \
 }
 
 #define TOKEN_GENERATOR_DATA_C(fname, ttype, argt)                                      \
-Token token_##fname(argt fname, unsigned int line, unsigned int column, String path) {  \
+Token token_##fname(argt fname, unsigned int line, unsigned int column, StringIntern path) {  \
     Token token;                                                                        \
     token.type = ttype;                                                                 \
     token.fname = fname;                                                                \
@@ -31,7 +31,7 @@ TOKEN_GENERATOR_C(lcurl, LCURL)
 TOKEN_GENERATOR_C(rcurl, RCURL)
 TOKEN_GENERATOR_C(hash, HASH)
 
-TOKEN_GENERATOR_DATA_C(symbol, SYMBOL, String)
-TOKEN_GENERATOR_DATA_C(keyword, KEYWORD, String)
+TOKEN_GENERATOR_DATA_C(symbol, SYMBOL, StringIntern)
+TOKEN_GENERATOR_DATA_C(keyword, KEYWORD, StringIntern)
 TOKEN_GENERATOR_DATA_C(integer, INTEGER, long)
 TOKEN_GENERATOR_DATA_C(string, STRING, const char*)

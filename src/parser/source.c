@@ -1,7 +1,3 @@
-//
-// Created by mcmacker4 on 11/2/20.
-//
-
 #include "source.h"
 
 #include <string.h>
@@ -40,7 +36,7 @@ const char* read_file(const char* path) {
     return text;
 }
 
-SourceCode source_from_file(String path) {
+SourceCode source_from_file(StringIntern path) {
     const char* text = read_file(path);
     SourceCode code;
     code.text = text;
